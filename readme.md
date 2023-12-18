@@ -1,4 +1,4 @@
-# Localize.NET
+# Localize
 
 IIS module that enables granular control of culture-specific formats via the config file.
 
