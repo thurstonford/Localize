@@ -2,22 +2,24 @@
 
 IIS module that enables granular control of culture-specific formats via the config file.
 
-By default, ASP.NET only supports globalization in the web.config file, ie: forcing the application to a specific culture eg: en-US, en-FR, en-RU etc.
-The application then uses the regional settings of the host for displaying currency, number and date time information.
-Issues can arise with how currency, number and date/time information is handled if these regional settings differ between hosts (eg: migrating sites/services from one server to another).
-This IIS module allows the developer to override the format of the individual NumberFormatInfo and DateTimeFormatInfo properties in the web.config file.
+By default, ASP.NET only supports globalization in the web.config file, ie: forcing the application to a specific culture eg: en-US, en-FR, en-RU etc. 
+The application then uses the regional settings of the host for displaying currency, number and date time information. 
+Issues can arise with how currency, number and date/time information is handled if these regional settings differ between hosts (eg: migrating sites/services from one server to another). 
+This IIS module allows the developer to override the format of the individual NumberFormatInfo and DateTimeFormatInfo properties in the web.config file. 
 
 ## Features
 - Granular control of currency, number and date/time formats for multiple cultures.
+- Global override (apply speciifc format regardless of culture).
 - Multi-process support (worker threads also honour your specified formats).
-- Override values of all public properties of the NumberFormatInfo and DateTimeFormatInfo objects.
-- No code changes required.
+- Override values of all public properties of the [NumberFormatInfo](https://learn.microsoft.com/en-us/dotnet/api/system.globalization.numberformatinfo?view=netframework-4.8.1) and [DateTimeFormatInfo](https://learn.microsoft.com/en-us/dotnet/api/system.globalization.datetimeformatinfo?view=netframework-4.8.1) objects.
+- No code changes required - all controlled via the web.config file.
 
 ## Getting Started
 
-Add the Localize.dll file to the bin directory of your ASP.NET web application or web service.
-Add config (see below).
-Test.
+Add the Localize.dll file to the bin directory of your ASP.NET web application or web service. 
+Add config (see below). 
+Test. 
+Smile. 
 
 ## Add Config
 
@@ -35,6 +37,11 @@ Override the hosts regional settings with custom values defined in your web.conf
     <!-- Force a specific culture (optional) -->
     <add key="culture.cultureName" value="en-FR" />
     
+    <!-- Global override -->
+    <add key="culture..NumberDecimalSeparator" value="!" />
+    <add key="culture..NumberGroupSizes" value="2,3,2" />
+    <add key="culture..CurrencySymbol" value="Z" />
+
     <!-- Override culture-specific settings (optional, case-insensitive) -->
     <add key="culture.en-za.NumberDecimalSeparator" value="." />
     <add key="culture.en-za.numberdecimalDigits" value="99" />
@@ -56,7 +63,8 @@ Exceptions are handled gracefully and logged to the Windows Event Log.
 
 - [Microsoft Globalization documentation](https://learn.microsoft.com/en-us/dotnet/api/system.globalization?view=netframework-4.8.1) 
 - [Microsoft CultureInfo documentation](https://learn.microsoft.com/en-us/dotnet/api/system.globalization.cultureinfo?view=netframework-4.8.1)
-
+- [Microsoft NumberFormatInfo documentation](https://learn.microsoft.com/en-us/dotnet/api/system.globalization.numberformatinfo?view=netframework-4.8.1)
+- [Microsoft DateTimeFormatInfo documentation](https://learn.microsoft.com/en-us/dotnet/api/system.globalization.datetimeformatinfo?view=netframework-4.8.1)
 ## Feedback
 
 I welcome comments, suggestions, feature requests and honest criticism :)  

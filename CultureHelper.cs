@@ -36,7 +36,7 @@ namespace Localize
             OverrideCultureProperties(cultureName, currentThread.CurrentCulture.NumberFormat);
             
             // Override the properties of the DateTimeFormatInfo object
-            OverrideCultureProperties(cultureName, currentThread.CurrentCulture.DateTimeFormat);
+            OverrideCultureProperties(cultureName, currentThread.CurrentCulture.DateTimeFormat);            
         }
 
         /// <summary>
@@ -53,8 +53,16 @@ namespace Localize
             foreach(var propertyInfo in propertyInfos) {
                 // See if we have a corresponding value for this in the appSettings section of
                 // the config file, eg:
-                // <add key="culture.CurrencySymbol" value="$" />
-                string value = _appSettings[$"culture.{cultureName}.{propertyInfo.Name}"];
+                // <add key="culture.en-US.CurrencySymbol" value="$" />
+
+                // First check for the global override for this property, eg:
+                // <add key="culture..CurrencySymbol" value="Z" />
+                string value = _appSettings[$"culture..{propertyInfo.Name}"];
+
+                // If there is no global override then check for the culture-specific override for this property
+                if(string.IsNullOrEmpty(value)) {                    
+                    value = _appSettings[$"culture.{cultureName}.{propertyInfo.Name}"];
+                }
 
                 // If there is a value configured for this property, attempt to set it
                 if(!string.IsNullOrEmpty(value)) {
@@ -76,6 +84,9 @@ namespace Localize
                             case "System.Boolean":
                                 propertyInfo.SetValue(targetObject, Boolean.Parse(value), null);
                                 break;
+                            case "System.Int32[]": //NumberGroupSizes                                
+                                propertyInfo.SetValue(targetObject, Array.ConvertAll(value.Split(','), int.Parse), null);
+                                break;
                             default:
                                 propertyInfo.SetValue(targetObject, value, null);
                                 break;
@@ -89,9 +100,7 @@ namespace Localize
                             eventLog.WriteEntry(
                                 $"{source} - Unable to apply value {value} to setting '{propertyInfo.Name}': {ex.GetBaseException()}",
                                 EventLogEntryType.Error);
-                        }
-
-                        
+                        }                        
                     }
                 }
             }
